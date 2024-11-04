@@ -1,3 +1,74 @@
+# Docker CamOdoCal
+## Docker 
+### Compose
+1. docker compose build 
+2. xhost +local:root
+3. docker compose up
+#### Intrinsic calib
+Run the script inside `build/bin` and then move the results outside the docker 
+```
+./intrinsic_calib -w 10 -h 6 -s 100 --opencv --camera-model pinhole -p front_camera -e .png -i /root/data_host/calib_front_full_chess --view-results 
+mv camera* ../../../data_host/output_data/.
+chmod -R a+rw ../../../data_host/output_data/*
+exit
+```
+
+### Docker Helper (docker run) 
+After cloning the repository, run the next command (UNIX systems):
+`./docker_helper.sh --build`
+After the container is built; run the following command:
+`./docker_helper.sh --run [CAMODOCAL_COMMAND]`
+Or keep the docker running:
+`./docker_helper.sh --run-keep`
+
+## Rectify
+To use the script `rectify.py` for undistorting images based on a specific camera model, follow this command syntax:
+
+```bash
+python rectify.py --model <MODEL> --image_path <IMAGE_PATH> --yaml_path <YAML_PATH> --output_path <OUTPUT_PATH>
+```
+
+### Explanation of Arguments
+
+- `--model <MODEL>`:
+   - Specifies the camera model used for calibration. This argument is **required**.
+   - Options are:
+     - `pinhole`: For a pinhole camera model.
+     - `kannala`: For the Kannala-Brandt (fisheye) camera model.
+   
+- `--image_path <IMAGE_PATH>`:
+   - Path to the directory containing the images to be rectified.
+   - Replace `<IMAGE_PATH>` with the actual path where your images are stored.
+
+- `--yaml_path <YAML_PATH>`:
+   - Path to the YAML file containing the camera parameters (intrinsic and distortion coefficients).
+   - Replace `<YAML_PATH>` with the path to your specific YAML file.
+
+- `--output_path <OUTPUT_PATH>`:
+   - Directory where the rectified images will be saved.
+   - Use `.` to save in the current directory or specify another path as needed.
+
+### Example Command
+
+```bash
+python rectify.py --model pinhole --image_path /home/lsangreg/camodocal/input_data/calib_front_full_chess --yaml_path /home/lsangreg/camodocal/output_data/pinhole_other_repo/camera_camera_calib.yaml --output_path .
+```
+
+In this example:
+- `--model pinhole` specifies that the pinhole camera model will be used.
+- `--image_path /home/lsangreg/camodocal/input_data/calib_front_full_chess` points to the directory containing images.
+- `--yaml_path /home/lsangreg/camodocal/output_data/pinhole_other_repo/camera_camera_calib.yaml` provides the path to the YAML file with camera calibration data.
+- `--output_path .` means that rectified images will be saved in the current directory.
+
+### Notes
+Ensure you have installed required dependencies (`opencv-python`, `PyYAML`, and `numpy`) before running the script. You can install them via:
+```bash
+pip install opencv-python PyYAML numpy
+``` 
+
+This setup will allow you to undistort a batch of images based on the specified camera calibration parameters and save the results to the desired output path.
+
+
 CamOdoCal
 =========
  
@@ -142,3 +213,4 @@ Go to the build folder where the executables corresponding to the examples are l
   [2]: https://github.com/hengli/camodocal/blob/master/src/examples/intrinsic_calib.cc "src/examples/intrinsic_calib.cc"
   [3]: https://github.com/hengli/camodocal/blob/master/src/examples/stereo_calib.cc "src/examples/stereo_calib.cc"
   [4]: https://github.com/hengli/camodocal/blob/master/src/examples/extrinsic_calib.cc "src/examples/extrinsic_calib.cc"
+

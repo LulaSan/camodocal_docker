@@ -1,6 +1,7 @@
 # Docker CamOdoCal
 ## Docker 
 ### Compose
+0. Create folders for input images and output data results `mkdir input_data && mkdir output_data`
 1. docker compose build 
 2. xhost +local:root
 3. docker compose up
